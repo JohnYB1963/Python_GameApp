@@ -1,0 +1,165 @@
+    def handleStartEnemyV2(self, e, x, y, z):
+        vs = False
+        #find a random starting point
+        while not vs:
+            e.findStartLocation()
+            if self.maze.mz[int(e.y / 20)][int(e.x / 20)] == " " or self.maze.mz[int(e.y / 20)][int(e.x / 20)] == "X":
+                vs = True
+            else:
+                e.findStartLocation()
+        while self._running:
+            #pick a random choice for the enemy
+            choice = random.choice(["up", "down", "left", "right"])
+            moving = True
+            while moving:
+                #the enemy should continue moving in that direction until he must stop
+
+                if self.isValidPosition(e.y, e.x, choice):
+                    print("we got at least one valid position for enemy: ", e.id)
+                    continue
+                else:
+                    print("no valid option for enemy no:", e.id)
+                    moving = False
+                    break
+
+                # check to see if player is touching enemy's left side
+                if self.player.x - 20 == e.x and self.player.y == e.y:
+                    self.on_Death()
+
+                # check to see if player is touching enemy's right side
+                if self.player.x + 20 == e.x and self.player.y == e.y:
+                    self.on_Death()
+
+                # check to see if player is touching enemy's top
+                if self.player.y - 20 == e.y and self.player.x == e.x:
+                    self.on_Death()
+
+                # check to see if player is touching enemy bottom
+                if self.player.y + 20 == e.y and self.player.x == e.x:
+                    self.on_Death()
+            break
+
+    def handleStartEnemy(self, e, x, y, z):
+
+        self.vs = False
+        # find a random starting point for enemy
+        while not self.vs:
+            e.findStartLocation()
+            if self.maze.mz[int(e.y / 20)][int(e.x / 20)] == " " or self.maze.mz[int(e.y / 20)][int(e.x / 20)] == "X":
+                self.vs = True
+            else:
+                e.findStartLocation()
+        # independent while loop to move enemy and check if player is near him
+        while self._running:
+
+            self.moving = True
+            while self.moving:
+
+
+                choice = random.choice(["up", "down", "left", "right"])
+                #print(choice, e.id)
+
+                # if choice == "up" and ((self.maze.mz[int(e.y / 20)-1][int(e.x / 20)] == " " or self.maze.mz[int(e.y / 20)-1][int(e.x / 20)] == "X")):
+                #     e.y -= 20
+                #
+                # if choice == "down" and ((self.maze.mz[int(e.y / 20)+1][int(e.x / 20)] == " " or self.maze.mz[int(e.y / 20)+1][int(e.x / 20)] == "X")):
+                #     e.y += 20
+                #
+                # if choice == "left" and ((self.maze.mz[int(e.y / 20)][int(e.x / 20)-1] == " " or self.maze.mz[int(e.y / 20)][int(e.x / 20)-1] == "X")):
+                #     e.x -= 20
+                #
+                # if choice == "right" and ((self.maze.mz[int(e.y / 20)][int(e.x / 20)+1] == " " or self.maze.mz[int(e.y / 20)][int(e.x / 20)+1] == "X")):
+                #     e.x += 20
+
+                if choice is "right" or "left":
+                    e.x = e.x + self.moveToOtherPosition(e.y, e.x, choice)
+                else:
+                    e.y = e.y + self.moveToOtherPosition(e.y, e.x, choice)
+
+                time.sleep(0.1)
+
+                # check to see if player is touching enemy's left side
+                if self.player.x - 20 == e.x and self.player.y == e.y:
+                    self.on_Death()
+
+                # check to see if player is touching enemy's right side
+                if self.player.x + 20 == e.x and self.player.y == e.y:
+                    self.on_Death()
+
+                # check to see if player is touching enemy's top
+                if self.player.y - 20 == e.y and self.player.x == e.x:
+                    self.on_Death()
+
+                # check to see if player is touching enemy bottom
+                if self.player.y + 20 == e.y and self.player.x == e.x:
+                    self.on_Death()
+
+    def moveToOtherPosition(self, positiony, positionx, choice):
+        if choice == "up" and ((self.maze.mz[int(positiony / 20) - 1][int(positionx / 20)] == " " or self.maze.mz[int(positiony / 20) - 1][
+            int(positionx / 20)] == "X")):
+            return -20
+
+        elif choice == "down" and ((self.maze.mz[int(positiony / 20) + 1][int(positionx / 20)] == " " or self.maze.mz[int(positiony / 20) + 1][
+            int(positionx / 20)] == "X")):
+            return +20
+
+        elif choice == "left" and ((self.maze.mz[int(positiony / 20)][int(positionx / 20) - 1] == " " or self.maze.mz[int(positiony / 20)][
+            int(positionx / 20) - 1] == "X")):
+            return -20
+
+        elif choice == "right" and ((self.maze.mz[int(positiony / 20)][int(positionx / 20) + 1] == " " or self.maze.mz[int(positiony / 20)][
+            int(positiony / 20) + 1] == "X")):
+            return +20
+        else:
+            return 0
+
+
+
+
+    def isValidPosition(self, positiony, positionx, choice):
+        if choice == "up" and (self.maze.mz[int(positiony / 20) - 1][int(positionx / 20)] == " " or
+                self.maze.mz[int(positiony / 20) - 1][int(positionx / 20)] == "X"):
+            return True
+
+        elif choice == "down" and (self.maze.mz[int(positiony / 20) + 1][int(positionx / 20)] == " " or
+                self.maze.mz[int(positiony / 20) + 1][int(positionx / 20)] == "X"):
+            return True
+
+        elif choice == "right" and (self.maze.mz[int(positiony / 20)][int(positionx / 20) + 1] == " " or
+                self.maze.mz[int(positiony / 20)][int(positionx / 20) + 1] == "X"):
+            return True
+
+        elif choice == "left" and (self.maze.mz[int(positiony / 20)][int(positionx / 20) - 1] == " " or
+                self.maze.mz[int(positiony / 20)][int(positionx / 20) - 1] == "X"):
+            return True
+        else:
+            return False
+
+    def otherPositionAvailable(self, positiony, positionx, choice):
+        #determines if there is another way to go that ISNT either the way object is going, or the opposite
+        array = []
+        if self.maze.mz[int(positiony / 20) - 1][int(positionx / 20)] == " " or self.maze.mz[int(positiony / 20) - 1][
+            int(positionx / 20)] == "X":
+            array.append("up")
+
+        if self.maze.mz[int(positiony / 20) + 1][int(positionx / 20)] == " " or self.maze.mz[int(positiony / 20) + 1][
+            int(positionx / 20)] == "X":
+            array.append("down")
+
+        if self.maze.mz[int(positiony / 20)][int(positionx / 20) + 1] == " " or self.maze.mz[int(positiony / 20)][
+            int(positionx / 20) + 1] == "X":
+            array.append("right")
+
+        if self.maze.mz[int(positiony / 20)][int(positionx / 20) - 1] == " " or self.maze.mz[int(positiony / 20)][
+            int(positionx / 20) - 1] == "X":
+            array.append("left")
+
+        if self.getInverse(choice) in array:
+            array.remove(self.getInverse(choice))
+
+        array.remove(choice)
+        #print(len(array))
+        time.sleep(1)
+
+        if len(array) > 0:
+            return True
